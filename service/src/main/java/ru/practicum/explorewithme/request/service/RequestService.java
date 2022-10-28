@@ -8,8 +8,6 @@ import ru.practicum.explorewithme.request.model.Status;
 import java.util.List;
 
 public interface RequestService {
-    Request getById(Long id);
-
     List<RequestDto> getAll(Long id);
 
     RequestDto add(Long userId, Event event);

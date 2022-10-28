@@ -3,6 +3,7 @@ package ru.practicum.explorewithme.event.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.event.model.EventFullDto;
 import ru.practicum.explorewithme.event.model.EventShortDto;
@@ -11,12 +12,15 @@ import ru.practicum.explorewithme.event.service.EventService;
 import ru.practicum.explorewithme.exception.BadRequestException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping(path = "/events")
 public class PublicEventController {
     public static final String ID_PATH_VARIABLE_KEY = "id";
@@ -31,8 +35,8 @@ public class PublicEventController {
                                           @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                           @RequestParam(defaultValue = "false") Boolean onlyAvailable,
                                           @RequestParam(required = false) String sort,
-                                          @RequestParam(defaultValue = "0") int from,
-                                          @RequestParam(defaultValue = "10") int size,
+                                          @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                          @RequestParam(defaultValue = "10") @Positive int size,
                                           HttpServletRequest request) {
         log.info("Получен запрос GET по пути /events");
         if (!sort.equals("EVENT_DATE") && !sort.equals("VIEWS")) {

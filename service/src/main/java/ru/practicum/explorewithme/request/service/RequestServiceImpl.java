@@ -32,8 +32,7 @@ public class RequestServiceImpl implements RequestService {
     private final RequestRepository repository;
     private final ValidationService validationService;
 
-    @Override
-    public Request getById(Long id) {
+    private Request getById(Long id) {
         log.info("Получение заявки с id {}", id);
         return repository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(REQUEST_NOT_FOUND_MESSAGE, id)));
@@ -56,7 +55,7 @@ public class RequestServiceImpl implements RequestService {
         Request request = repository.getByRequesterIdAndEventId(userId, event.getId());
         validationService.validateNewRequest(event, userId, request, getRequestsByStatus(event.getId(), Status.CONFIRMED));
         Request newRequest = new Request(null, user, event, LocalDateTime.now(), Status.PENDING);
-        if (Boolean.FALSE.equals(event.getRequestModeration())) {
+        if (!event.isRequestModeration()) {
             newRequest.setStatus(Status.CONFIRMED);
         }
         return RequestMapper.toRequestDto(repository.save(newRequest));
@@ -100,12 +99,12 @@ public class RequestServiceImpl implements RequestService {
     public RequestDto confirmRequest(Event event, Long userId, Long requestId) {
         log.info("Утверждение зявки с id {}", requestId);
         Request request = getById(requestId);
-        if (event.getParticipantLimit() == 0 || Boolean.FALSE.equals(event.getRequestModeration())) {
+        if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
             request.setStatus(Status.CONFIRMED);
             add(userId, event);
             throw new BadRequestException(WRONG_STATE_TO_CONFIRM_REQUEST_MESSAGE);
         }
-        if (event.getParticipantLimit().intValue() == getRequestsByStatus(event.getId(), Status.CONFIRMED).size()) {
+        if (event.getParticipantLimit() == getRequestsByStatus(event.getId(), Status.CONFIRMED).size()) {
             List<Request> pendingRequests = getRequestsByStatus(event.getId(), Status.PENDING);
             for (Request r : pendingRequests) {
                 r.setStatus(Status.REJECTED);

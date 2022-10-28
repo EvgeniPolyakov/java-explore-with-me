@@ -36,9 +36,9 @@ public interface EventService {
     List<EventFullDto> getAllByFilter(List<Long> users, List<State> states, List<Long> categories, LocalDateTime rangeStart,
                                       LocalDateTime rangeEnd, int from, int size);
 
-    EventFullDto updateEvent(Long id, UpdateEventDto eventDto);
+    EventFullDto updateByAdmin(Long id, UpdateEventDto eventDto);
 
-    EventFullDto publish(Long id);
+    EventFullDto publishByAdmin(Long id);
 
     EventFullDto reject(Long id);
 }

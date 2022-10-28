@@ -2,7 +2,7 @@ package ru.practicum.explorewithme.request.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.user.model.User;
@@ -12,10 +12,10 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@RequiredArgsConstructor
 @Entity
 @Table(name = "requests")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

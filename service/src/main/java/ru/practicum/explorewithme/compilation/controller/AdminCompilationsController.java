@@ -2,19 +2,23 @@ package ru.practicum.explorewithme.compilation.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.compilation.model.Compilation;
+import ru.practicum.explorewithme.compilation.model.CompilationDto;
 import ru.practicum.explorewithme.compilation.model.NewCompilationDto;
 import ru.practicum.explorewithme.compilation.service.CompilationMapper;
 import ru.practicum.explorewithme.compilation.service.CompilationsService;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.service.EventService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping(path = "/admin/compilations")
 public class AdminCompilationsController {
     public static final String ID_PATH_VARIABLE_KEY = "id";
@@ -24,7 +28,7 @@ public class AdminCompilationsController {
     private final EventService eventService;
 
     @PostMapping
-    public Compilation add(@RequestBody NewCompilationDto compilationDto) {
+    public CompilationDto add(@Valid @RequestBody NewCompilationDto compilationDto) {
         log.info("Получен запрос POST по пути /admin/compilations: {}", compilationDto);
         List<Event> events = eventService.getCompilationEvents(compilationDto);
         Compilation compilation = CompilationMapper.toCompilation(compilationDto, events);
@@ -32,15 +36,15 @@ public class AdminCompilationsController {
     }
 
     @PatchMapping("/{id}/events/{eventId}")
-    public Compilation addEvent(@PathVariable(ID_PATH_VARIABLE_KEY) Long compilationId,
-                                @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId) {
+    public CompilationDto addEvent(@PathVariable(ID_PATH_VARIABLE_KEY) Long compilationId,
+                                   @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId) {
         log.info("Получен запрос PATCH по пути /admin/compilations (id: {}, eventId: {})", compilationId, eventId);
         Event eventToAdd = eventService.getEventById(eventId);
         return compilationsService.update(compilationId, eventId, eventToAdd);
     }
 
     @PatchMapping("/{id}/pin")
-    public Compilation pin(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
+    public CompilationDto pin(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
         log.info("Получен запрос PATCH для прикрепления подборки с id: {}", id);
         return compilationsService.pin(id);
     }
@@ -60,7 +64,7 @@ public class AdminCompilationsController {
     }
 
     @DeleteMapping("/{id}/pin")
-    public Compilation unpin(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
+    public CompilationDto unpin(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
         log.info("Получен запрос PATCH для открепления подборки с id: {}", id);
         return compilationsService.unpin(id);
     }

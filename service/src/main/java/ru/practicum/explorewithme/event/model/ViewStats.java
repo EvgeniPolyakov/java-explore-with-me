@@ -2,11 +2,11 @@ package ru.practicum.explorewithme.event.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class ViewStats {
     private String app;
     private String uri;

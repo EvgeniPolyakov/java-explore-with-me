@@ -3,24 +3,27 @@ package ru.practicum.explorewithme;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.explorewithme.model.Hit;
+import ru.practicum.explorewithme.model.HitDto;
 import ru.practicum.explorewithme.model.ViewStats;
 import ru.practicum.explorewithme.service.StatsService;
 
+import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class StatsController {
     private final StatsService statsService;
 
     @PostMapping("/hit")
-    public void addHit(@RequestBody Hit hit) {
-        log.info("Получен запрос POST по пути /hit для добавления статистики: {}", hit);
-        statsService.addHit(hit);
+    public void addHit(@Valid @RequestBody HitDto dto) {
+        log.info("Получен запрос POST по пути /hit для добавления статистики: {}", dto);
+        statsService.addHit(dto);
     }
 
     @GetMapping("/stats")

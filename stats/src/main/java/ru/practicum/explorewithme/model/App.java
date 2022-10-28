@@ -1,20 +1,22 @@
-package ru.practicum.explorewithme.category.model;
+package ru.practicum.explorewithme.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Entity
-@Table(name = "categories")
+@Table(name = "apps")
 @AllArgsConstructor
 @NoArgsConstructor
-public class Category {
+public class App {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false, unique = true)
-    private String name;
+    @NotBlank
+    @Column(name = "app_name")
+    private String appName;
 }

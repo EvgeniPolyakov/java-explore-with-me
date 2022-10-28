@@ -1,7 +1,5 @@
 package ru.practicum.explorewithme.common;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.event.model.State;
@@ -13,8 +11,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@Slf4j
-@RequiredArgsConstructor
 public class ValidationService {
     private static final String NO_ACCESS_MESSAGE = "Пользователь с id %s не имеет доступа к событию с id %s.";
     public static final String UNPUBLISHED_EVENT_PARTICIPATION_ERROR_MESSAGE =

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.StatsRepository;
 import ru.practicum.explorewithme.model.Hit;
+import ru.practicum.explorewithme.model.HitDto;
 import ru.practicum.explorewithme.model.ViewStats;
 
 import java.time.LocalDateTime;
@@ -20,8 +21,9 @@ public class StatsServiceImpl implements StatsService {
     private final StatsRepository repository;
 
     @Override
-    public void addHit(Hit hit) {
-        log.info("Сохранение статистики для hit: {}", hit);
+    public void addHit(HitDto dto) {
+        log.info("Сохранение статистики для hit: {}", dto);
+        Hit hit = StatsMapper.toHit(dto);
         repository.save(hit);
     }
 
@@ -30,7 +32,8 @@ public class StatsServiceImpl implements StatsService {
         log.info("Получение статистики по списку uri: {}", uris);
         List<ViewStats> stats = new ArrayList<>();
         for (String uri : uris) {
-            ViewStats stat = StatsMapper.toViewStats(repository.findDistinctHitsByUriAndTimestampBetween(uri, start, end));
+            List<Hit> hits = repository.findDistinctHitsByUriAndTimestampBetween(uri, start, end);
+            ViewStats stat = StatsMapper.toViewStats(hits);
             stats.add(stat);
         }
         return stats;

@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.category.model.Category;
+import ru.practicum.explorewithme.category.model.CategoryDto;
 import ru.practicum.explorewithme.category.model.NewCategoryDto;
 import ru.practicum.explorewithme.category.service.CategoryMapper;
 import ru.practicum.explorewithme.category.service.CategoryService;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
@@ -18,16 +21,16 @@ public class AdminCategoryController {
     private final CategoryService categoryService;
 
     @PostMapping
-    public Category add(@RequestBody NewCategoryDto categoryDto) {
+    public CategoryDto add(@Valid @RequestBody NewCategoryDto categoryDto) {
         log.info("Получен запрос POST по пути /admin/categories: {}", categoryDto);
         Category category = CategoryMapper.toCategory(categoryDto);
         return categoryService.add(category);
     }
 
     @PatchMapping
-    public Category update(@RequestBody Category category) {
-        log.info("Получен запрос PATCH по пути /admin/categories: {}", category);
-        return categoryService.update(category);
+    public CategoryDto update(@RequestBody CategoryDto categoryDto) {
+        log.info("Получен запрос PATCH по пути /admin/categories: {}", categoryDto);
+        return categoryService.update(categoryDto);
     }
 
     @DeleteMapping("/{id}")

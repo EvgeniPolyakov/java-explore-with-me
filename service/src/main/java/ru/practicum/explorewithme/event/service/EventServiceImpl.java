@@ -38,6 +38,7 @@ public class EventServiceImpl implements EventService {
     private static final String EVENT_NOT_FOUND_MESSAGE = "Событие c id %s не найдено.";
     public static final int ONE_HOUR_VALUE = 1;
     public static final int TWO_HOURS_VALUE = 2;
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final EventRepository repository;
     private final RequestService requestService;
@@ -52,7 +53,7 @@ public class EventServiceImpl implements EventService {
         log.info("Получение события с id {}", id);
         statsClient.postHit(
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        LocalDateTime.now().format(DATE_TIME_FORMATTER))
         );
         Event event = repository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, id)));
@@ -73,7 +74,7 @@ public class EventServiceImpl implements EventService {
         log.info("Получение всех событий с параметрами фильтра: {}", params);
         statsClient.postHit(
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        LocalDateTime.now().format(DATE_TIME_FORMATTER))
         );
 
         Predicate predicate = QPredicates.builder()
@@ -111,7 +112,7 @@ public class EventServiceImpl implements EventService {
     public EventFullDto add(NewEventDto eventDto, Long id) {
         log.info("Добавление события: {}", eventDto);
         validationService.validateDeadline(eventDto.getEventDate(), TWO_HOURS_VALUE);
-        Category category = categoryService.getById(eventDto.getCategory());
+        Category category = categoryService.getCategoryById(eventDto.getCategory());
         User initiator = userService.getById(id);
         Event newEvent = EventMapper.toEvent(eventDto, category, initiator);
         return toFullDto(repository.save(newEvent));
@@ -140,7 +141,7 @@ public class EventServiceImpl implements EventService {
         Event event = getEventById(eventId);
         validationService.validatePendingState(event);
         event.setState(State.CANCELED);
-        return toFullDto(repository.save(event));
+        return toFullDto(event);
     }
 
     @Override
@@ -188,21 +189,21 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public EventFullDto updateEvent(Long id, UpdateEventDto eventDto) {
+    public EventFullDto updateByAdmin(Long id, UpdateEventDto eventDto) {
         log.info("Обновление события: {}", eventDto);
         Event event = getEventById(id);
         return updateEventFields(eventDto, event);
     }
 
     @Override
-    public EventFullDto publish(Long id) {
+    public EventFullDto publishByAdmin(Long id) {
         log.info("Публикация/утверждение события с id: {}", id);
         Event event = getEventById(id);
         validationService.validateDeadline(event.getEventDate(), ONE_HOUR_VALUE);
         validationService.validatePendingState(event);
         event.setPublishedOn(LocalDateTime.now());
         event.setState(State.PUBLISHED);
-        return toFullDto(repository.save(event));
+        return toFullDto(event);
     }
 
     @Override
@@ -211,7 +212,7 @@ public class EventServiceImpl implements EventService {
         Event event = getEventById(id);
         validationService.validatePublishedState(event);
         event.setState(State.CANCELED);
-        return toFullDto(repository.save(event));
+        return toFullDto(event);
     }
 
     @Override
@@ -233,14 +234,14 @@ public class EventServiceImpl implements EventService {
             event.setDescription(eventDto.getDescription());
         }
         if (eventDto.getCategory() != null) {
-            Category category = categoryService.getById(eventDto.getCategory());
+            Category category = categoryService.getCategoryById(eventDto.getCategory());
             event.setCategory(category);
         }
         if (eventDto.getEventDate() != null) {
             event.setEventDate(eventDto.getEventDate());
         }
         if (eventDto.getParticipantLimit() != null) {
-            event.setParticipantLimit(eventDto.getParticipantLimit());
+            event.setParticipantLimit(eventDto.getParticipantLimit().intValue());
         }
         if (eventDto.getPaid() != null) {
             event.setPaid(eventDto.getPaid());
@@ -255,7 +256,7 @@ public class EventServiceImpl implements EventService {
                 event.getId().intValue(),
                 LocalDateTime.now().minusMonths(1),
                 LocalDateTime.now().plusMonths(1));
-        return EventMapper.toEventShortDto(event, (long) confirmedRequests, viewStats.getHits());
+        return EventMapper.toEventShortDto(event, confirmedRequests, viewStats.getHits().intValue());
     }
 
     private EventFullDto toFullDto(Event event) {
@@ -265,6 +266,6 @@ public class EventServiceImpl implements EventService {
                 event.getId().intValue(),
                 LocalDateTime.now().minusMonths(1),
                 LocalDateTime.now().plusMonths(1));
-        return EventMapper.toEventFullDto(event, (long) confirmedRequests, viewStats.getHits());
+        return EventMapper.toEventFullDto(event, confirmedRequests, viewStats.getHits().intValue());
     }
 }

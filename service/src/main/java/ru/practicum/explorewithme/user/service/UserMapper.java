@@ -1,9 +1,12 @@
 package ru.practicum.explorewithme.user.service;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.user.model.NewUserDto;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.model.UserDto;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
 
     public static UserDto toUserDto(User user) {

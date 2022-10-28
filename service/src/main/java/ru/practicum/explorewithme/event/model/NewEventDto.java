@@ -1,19 +1,13 @@
 package ru.practicum.explorewithme.event.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
-@RequiredArgsConstructor
 public class NewEventDto {
     @NotBlank
     @Size(min = 3, max = 120)
@@ -27,11 +21,13 @@ public class NewEventDto {
     private Long category;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull
+    @Future
     private LocalDateTime eventDate;
     private Location location;
     @PositiveOrZero
-    private Long participantLimit;
-    private Boolean paid;
+    private int participantLimit;
+    private boolean paid;
     private Boolean requestModeration;
 
 }
