@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface StatsRepository extends JpaRepository<Hit, Long> {
 
-    List<Hit> findDistinctHitsByUriAndTimestampBetween(String uri, LocalDateTime start, LocalDateTime end);
+    List<Hit> findDistinctHitsByUriInAndTimestampBetween(List<String> uri, LocalDateTime start, LocalDateTime end);
 
 }

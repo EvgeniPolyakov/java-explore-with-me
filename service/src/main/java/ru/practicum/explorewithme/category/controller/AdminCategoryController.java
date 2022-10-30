@@ -28,7 +28,7 @@ public class AdminCategoryController {
     }
 
     @PatchMapping
-    public CategoryDto update(@RequestBody CategoryDto categoryDto) {
+    public CategoryDto update(@Valid @RequestBody CategoryDto categoryDto) {
         log.info("Получен запрос PATCH по пути /admin/categories: {}", categoryDto);
         return categoryService.update(categoryDto);
     }

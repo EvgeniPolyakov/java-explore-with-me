@@ -1,14 +1,12 @@
 package ru.practicum.explorewithme.compilation.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.event.model.Event;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,4 +24,36 @@ public class Compilation {
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
     private List<Event> events;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public boolean isPinned() {
+        return pinned;
+    }
+
+    public void setPinned(boolean pinned) {
+        this.pinned = pinned;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
 }

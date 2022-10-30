@@ -9,9 +9,12 @@ import ru.practicum.explorewithme.model.Hit;
 import ru.practicum.explorewithme.model.HitDto;
 import ru.practicum.explorewithme.model.ViewStats;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,14 +31,20 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
-        log.info("Получение статистики по списку uri: {}", uris);
-        List<ViewStats> stats = new ArrayList<>();
-        for (String uri : uris) {
-            List<Hit> hits = repository.findDistinctHitsByUriAndTimestampBetween(uri, start, end);
-            ViewStats stat = StatsMapper.toViewStats(hits);
-            stats.add(stat);
+    @Transactional(readOnly = true)
+    public List<ViewStats> getStats(LocalDateTime start, LocalDateTime end, List<String> uncodedUris, Boolean unique) {
+        List<String> uris = new ArrayList<>();
+        for (String u : uncodedUris) {
+            uris.add(URLDecoder.decode(u, StandardCharsets.UTF_8));
         }
-        return stats;
+        log.info("Получение статистики по списку uri: {}", uris);
+        List<Hit> hits = repository.findDistinctHitsByUriInAndTimestampBetween(uris, start, end);
+        List<ViewStats> viewStats = hits.stream()
+                .map(h -> StatsMapper.toViewStats(h, hits.size()))
+                .collect(Collectors.toList());
+        if (viewStats.isEmpty()) {
+            return List.of(new ViewStats("unavailable", "unavailable", 0));
+        }
+        return viewStats;
     }
 }

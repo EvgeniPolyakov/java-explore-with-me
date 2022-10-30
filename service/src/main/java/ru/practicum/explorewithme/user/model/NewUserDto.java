@@ -14,6 +14,6 @@ public class NewUserDto {
     private String name;
     @NotNull
     @Email
-    @Size(max = 255)
+    @Size(max = 512)
     private String email;
 }

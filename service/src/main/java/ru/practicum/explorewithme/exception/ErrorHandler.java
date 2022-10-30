@@ -52,7 +52,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> exc(ConstraintViolationException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> exc(ConstraintViolationException e) {
+        log.info(EXCEPTION_STRING_MESSAGE, e.getMessage());
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }

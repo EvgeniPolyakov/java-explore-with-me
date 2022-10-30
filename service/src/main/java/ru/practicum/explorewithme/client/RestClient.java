@@ -24,7 +24,11 @@ public class RestClient {
     @Value("${stats-get.path}")
     private String hitGetPath;
 
-    RestTemplate rest = new RestTemplate();
+    RestTemplate rest;
+
+    public RestClient(RestTemplate rest) {
+        this.rest = rest;
+    }
 
     public void postHit(Hit hit) {
         log.info("Отправление пакета на сервер статистики: {}", hit);

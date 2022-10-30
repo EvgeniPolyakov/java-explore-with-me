@@ -7,18 +7,13 @@ import ru.practicum.explorewithme.model.Hit;
 import ru.practicum.explorewithme.model.HitDto;
 import ru.practicum.explorewithme.model.ViewStats;
 
-import java.util.List;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class StatsMapper {
-    public static ViewStats toViewStats(List<Hit> hits) {
-        if (hits.isEmpty()) {
-            return new ViewStats("unavailable", "unavailable", 0);
-        }
+    public static ViewStats toViewStats(Hit hits, int totalHits) {
         return new ViewStats(
-                hits.get(0).getApp().getAppName(),
-                hits.get(0).getUri(),
-                hits.size()
+                hits.getApp().getAppName(),
+                hits.getUri(),
+                totalHits
         );
     }
 

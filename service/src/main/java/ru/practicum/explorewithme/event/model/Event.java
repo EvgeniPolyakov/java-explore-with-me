@@ -1,7 +1,6 @@
 package ru.practicum.explorewithme.event.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.user.model.User;
@@ -9,7 +8,6 @@ import ru.practicum.explorewithme.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Data
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -43,4 +41,99 @@ public class Event {
     @Column(name = "request_moderation")
     private boolean requestModeration;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
+    public LocalDateTime getPublishedOn() {
+        return publishedOn;
+    }
+
+    public void setPublishedOn(LocalDateTime publishedOn) {
+        this.publishedOn = publishedOn;
+    }
+
+    public LocalDateTime getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(LocalDateTime eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    public User getInitiator() {
+        return initiator;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public int getParticipantLimit() {
+        return participantLimit;
+    }
+
+    public void setParticipantLimit(int participantLimit) {
+        this.participantLimit = participantLimit;
+    }
+
+    public boolean isPaid() {
+        return paid;
+    }
+
+    public void setPaid(boolean paid) {
+        this.paid = paid;
+    }
+
+    public boolean isRequestModeration() {
+        return requestModeration;
+    }
 }

@@ -1,13 +1,11 @@
 package ru.practicum.explorewithme.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-@Data
 @Entity
 @Table(name = "apps")
 @AllArgsConstructor
@@ -19,4 +17,8 @@ public class App {
     @NotBlank
     @Column(name = "app_name")
     private String appName;
+
+    public String getAppName() {
+        return appName;
+    }
 }

@@ -2,7 +2,6 @@ package ru.practicum.explorewithme.compilation.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.compilation.model.Compilation;
 import ru.practicum.explorewithme.compilation.model.CompilationDto;
@@ -18,7 +17,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Validated
 @RequestMapping(path = "/admin/compilations")
 public class AdminCompilationsController {
     public static final String ID_PATH_VARIABLE_KEY = "id";
