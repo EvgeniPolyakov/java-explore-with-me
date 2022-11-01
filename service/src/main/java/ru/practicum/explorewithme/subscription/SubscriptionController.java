@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.explorewithme.event.model.EventShortDto;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
@@ -18,7 +19,6 @@ import java.util.List;
 public class SubscriptionController {
     public static final String ID_PATH_VARIABLE_KEY = "id";
     public static final String FRIEND_ID_PATH_VARIABLE_KEY = "friendId";
-    public static final String PRIVATE_MODE_PATH_VARIABLE_KEY = "isPrivate";
 
     private final SubscriptionService subscriptionService;
 
@@ -41,22 +41,22 @@ public class SubscriptionController {
     }
 
     @PutMapping("/{friendId}")
-    public void addFriend(@PathVariable(ID_PATH_VARIABLE_KEY) Long userId,
-                          @PathVariable(FRIEND_ID_PATH_VARIABLE_KEY) Long friendId) {
+    public void addFriend(@PathVariable(ID_PATH_VARIABLE_KEY) @Positive @NotNull Long userId,
+                          @PathVariable(FRIEND_ID_PATH_VARIABLE_KEY) @Positive @NotNull Long friendId) {
         log.debug("Получен запрос PUT по пути /users/{}/friends/{}", userId, friendId);
         subscriptionService.addFriend(userId, friendId);
     }
 
     @DeleteMapping("/{friendId}")
-    public void deleteFriend(@PathVariable(ID_PATH_VARIABLE_KEY) Long userId,
-                             @PathVariable(FRIEND_ID_PATH_VARIABLE_KEY) Long friendId) {
+    public void deleteFriend(@PathVariable(ID_PATH_VARIABLE_KEY) @Positive @NotNull Long userId,
+                             @PathVariable(FRIEND_ID_PATH_VARIABLE_KEY) @Positive @NotNull Long friendId) {
         log.debug("Получен запрос DELETE по пути /users/{}/friends/{}", userId, friendId);
         subscriptionService.deleteFriend(userId, friendId);
     }
 
-    @PatchMapping("/privacy/{isPrivate}")
-    public void setPrivacy(@PathVariable(ID_PATH_VARIABLE_KEY) Long userId,
-                           @PathVariable(PRIVATE_MODE_PATH_VARIABLE_KEY) boolean isPrivate) {
+    @PatchMapping("/privacy")
+    public void setPrivacy(@PathVariable(ID_PATH_VARIABLE_KEY) @Positive @NotNull Long userId,
+                           @RequestParam boolean isPrivate) {
         log.debug("Получен запрос PUT по пути /admin/users/{}/friends/{}", userId, isPrivate);
         subscriptionService.setPrivacy(userId, isPrivate);
     }
