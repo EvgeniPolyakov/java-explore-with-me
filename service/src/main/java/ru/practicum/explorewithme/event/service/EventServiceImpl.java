@@ -109,6 +109,29 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<EventShortDto> getEventsUserCreatedOrJoined(Long id, int from, int size) {
+        log.info("Получение всех событий, добавленных пользователем с id {}", id);
+        List<Event> eventsCreated = repository.findEventsByInitiatorId(id, PageRequest.of(from, size));
+        log.info("Получение всех событий с одобренными заявками от пользователя с id {}", id);
+        List<Event> eventsJoined = requestService.getAllUserEventsWithConfirmedParticipation(id, PageRequest.of(from, size));
+        eventsCreated.addAll(eventsJoined);
+        return eventsCreated.stream()
+                .map(this::toShortDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EventShortDto> getAllUserFriendsEvents(List<Long> friendIds, int from, int size) {
+        log.info("Получение событий, созданных друзьями или с их участием");
+        return friendIds.stream()
+                .map(id -> getEventsUserCreatedOrJoined(id, from, size))
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public EventFullDto add(NewEventDto eventDto, Long id) {
         log.info("Добавление события: {}", eventDto);
         validationService.validateDeadline(eventDto.getEventDate(), TWO_HOURS_VALUE);

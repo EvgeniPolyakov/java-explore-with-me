@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -15,6 +16,15 @@ public class User {
     private Long id;
     private String name;
     private String email;
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @JoinTable(
+            name = "user_friends",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "friend_id")}
+    )
+    private Set<User> friends;
+    @Column(name = "private_mode")
+    private boolean privateMode;
 
     public Long getId() {
         return id;
@@ -34,5 +44,17 @@ public class User {
 
     public String getEmail() {
         return email;
+    }
+
+    public Set<User> getFriends() {
+        return friends;
+    }
+
+    public boolean getPrivateMode() {
+        return privateMode;
+    }
+
+    public void setPrivateMode(boolean privateMode) {
+        this.privateMode = privateMode;
     }
 }
