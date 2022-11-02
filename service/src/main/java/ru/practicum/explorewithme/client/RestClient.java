@@ -24,7 +24,7 @@ public class RestClient {
     @Value("${stats-get.path}")
     private String hitGetPath;
 
-    RestTemplate rest;
+    private final RestTemplate rest;
 
     public RestClient(RestTemplate rest) {
         this.rest = rest;

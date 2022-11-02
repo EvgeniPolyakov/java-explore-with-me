@@ -2,6 +2,7 @@ package ru.practicum.explorewithme.request.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.common.ValidationService;
@@ -72,16 +73,25 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<Request> getRequestsByStatus(Long id, Status status) {
-        log.info("Поиск всех зявок в статусе {} на событие {}", status, id);
+        log.info("Поиск всех зявок в статусе {} на событие с id {}", status, id);
         return repository.findByEventIdAndStatus(id, status);
     }
 
     @Override
     public List<RequestDto> getAllRequestsByEvent(Long eventId) {
-        log.info("Поиск всех зявок на событие {}", eventId);
+        log.info("Поиск всех зявок на событие с id {}", eventId);
         List<Request> requests = repository.getAllByEventId(eventId);
         return requests.stream()
                 .map(RequestMapper::toRequestDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Event> getAllUserEventsWithConfirmedParticipation(Long id, PageRequest pageRequest) {
+        log.info("Поиск всех событий с одобренными зявками от пользователя с id {}", id);
+        List<Request> requests = repository.findByRequesterIdAndStatus(id, Status.CONFIRMED, pageRequest);
+        return requests.stream()
+                .map(Request::getEvent)
                 .collect(Collectors.toList());
     }
 

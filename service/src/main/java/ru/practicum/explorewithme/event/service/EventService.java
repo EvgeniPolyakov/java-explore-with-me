@@ -19,6 +19,10 @@ public interface EventService {
 
     List<EventShortDto> getUserEvents(Long id, int from, int size);
 
+    List<EventShortDto> getAllUserFriendsEvents(List<Long> friendIds, int from, int size);
+
+    List<EventShortDto> getEventsUserCreatedOrJoined(Long id, int from, int size);
+
     EventFullDto add(NewEventDto eventDto, Long id);
 
     EventFullDto updateUserEvent(Long id, UpdateEventDto eventDto);

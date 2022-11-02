@@ -6,6 +6,10 @@ import ru.practicum.explorewithme.user.model.NewUserDto;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.model.UserDto;
 
+import java.util.HashSet;
+
+import static java.lang.Boolean.FALSE;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
 
@@ -21,7 +25,9 @@ public class UserMapper {
         return new User(
                 null,
                 userDto.getName(),
-                userDto.getEmail()
+                userDto.getEmail(),
+                new HashSet<>(),
+                FALSE
         );
     }
 }

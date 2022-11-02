@@ -1,5 +1,6 @@
 package ru.practicum.explorewithme.request.service;
 
+import org.springframework.data.domain.PageRequest;
 import ru.practicum.explorewithme.event.model.Event;
 import ru.practicum.explorewithme.request.model.Request;
 import ru.practicum.explorewithme.request.model.RequestDto;
@@ -17,6 +18,8 @@ public interface RequestService {
     List<Request> getRequestsByStatus(Long id, Status status);
 
     List<RequestDto> getAllRequestsByEvent(Long eventId);
+
+    List<Event> getAllUserEventsWithConfirmedParticipation(Long id, PageRequest pageRequest);
 
     RequestDto rejectRequest(Long requestId);
 
