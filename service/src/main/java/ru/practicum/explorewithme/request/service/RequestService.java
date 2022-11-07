@@ -19,6 +19,8 @@ public interface RequestService {
 
     List<RequestDto> getAllRequestsByEvent(Long eventId);
 
+    boolean isUserPresentAmongRequesters(Long userId, Long eventId);
+
     List<Event> getAllUserEventsWithConfirmedParticipation(Long id, PageRequest pageRequest);
 
     RequestDto rejectRequest(Long requestId);

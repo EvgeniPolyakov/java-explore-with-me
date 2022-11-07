@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.event.model.EventShortDto;
 import ru.practicum.explorewithme.event.service.EventService;
 import ru.practicum.explorewithme.exception.ForbiddenException;
+import ru.practicum.explorewithme.request.service.RequestService;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.service.UserService;
 
@@ -21,35 +22,56 @@ import java.util.stream.Collectors;
 public class SubscriptionServiceImpl implements SubscriptionService {
     private static final String NOT_A_FRIEND_MESSAGE = "Пользователь %s не входит в число друзей пользователя %s.";
     private static final String ACCESS_DENIED_MESSAGE = "Пользователь %s закрыл доступ к событиям со своим участием.";
+    private static final String FRIEND_ALREADY_ADDED_MESSAGE = "Пользователь %s уже находится в списке друзей.";
 
     private final UserService userService;
     private final EventService eventService;
+    private final RequestService requestService;
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getFriendEvents(Long userId, Long friendId, int from, int size) {
+    public List<EventShortDto> getFriendEvents(Long userId, Long friendId, boolean excludeOwn, int from, int size) {
         log.info("Получение пользователем с id {} событий с участием пользователя с id {}", userId, friendId);
         User user = userService.getById(userId);
         User friend = userService.getById(friendId);
         if (!user.getFriends().contains(friend)) {
             throw new ForbiddenException(String.format(NOT_A_FRIEND_MESSAGE, friendId, userId));
         }
-        if (!friend.getPrivateMode()) {
+        if (friend.getPrivateMode()) {
             throw new ForbiddenException(String.format(ACCESS_DENIED_MESSAGE, friendId));
         }
-        return eventService.getEventsUserCreatedOrJoined(friendId, from, size);
+        List<EventShortDto> eventsCollected = eventService.getEventsUserCreatedOrJoined(friendId, from, size);
+        if (excludeOwn) {
+            return eventsCollected.stream()
+                    .filter(e -> !e.getInitiator().equals(user))
+                    .collect(Collectors.toList());
+        }
+        return eventsCollected;
     }
 
     @Override
-    public List<EventShortDto> getAllUserFriendsAvailableEvents(Long userId, int from, int size) {
-        log.info("Получение всех доступных событий из подписки пользователя с id {}", userId);
+    @Transactional(readOnly = true)
+    public Set<EventShortDto> getAllUserFriendsAvailableEvents(Long userId, boolean excludeOwn, boolean excludeMutual,
+                                                               int from, int size) {
+        log.info("Получение всех событий с участием друзей пользователя с id {}", userId);
         User user = userService.getById(userId);
         Set<User> friends = user.getFriends();
         List<Long> friendIds = friends.stream()
                 .filter(u -> !u.getPrivateMode())
                 .map(User::getId)
                 .collect(Collectors.toList());
-        return eventService.getAllUserFriendsEvents(friendIds, from, size);
+        Set<EventShortDto> eventsCollected = eventService.getAllUserFriendsEvents(friendIds, from, size);
+        if (excludeOwn) {
+            eventsCollected = eventsCollected.stream()
+                    .filter(e -> !e.getInitiator().equals(user))
+                    .collect(Collectors.toSet());
+        }
+        if (excludeMutual) {
+            eventsCollected = eventsCollected.stream()
+                    .filter(e -> requestService.isUserPresentAmongRequesters(user.getId(), e.getId()))
+                    .collect(Collectors.toSet());
+        }
+        return eventsCollected;
     }
 
     @Override
@@ -59,6 +81,9 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         User friend = userService.getById(friendId);
         if (friend.getPrivateMode()) {
             throw new ForbiddenException(String.format(ACCESS_DENIED_MESSAGE, friendId));
+        }
+        if (user.getFriends().contains(friend)) {
+            throw new ForbiddenException(String.format(FRIEND_ALREADY_ADDED_MESSAGE, friendId));
         }
         user.getFriends().add(friend);
         log.info("Пользователь с id {} подписался на события пользователя с id {}", userId, friendId);

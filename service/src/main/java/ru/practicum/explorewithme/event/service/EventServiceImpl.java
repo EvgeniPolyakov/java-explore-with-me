@@ -26,6 +26,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.practicum.explorewithme.event.model.QEvent.event;
@@ -83,13 +84,12 @@ public class EventServiceImpl implements EventService {
                 .add(params.getCategories(), event.category.id::in)
                 .add(params.getRangeStart(), event.eventDate::after)
                 .add(params.getRangeEnd(), event.eventDate::before)
-                .add(params.getPaid(), event.paid::eq)
+                .add(params.isPaid(), event.paid::eq)
                 .buildAnd();
         List<Event> events = repository.findAll(predicate, PageRequest.of(from, size)).getContent();
-        if (Boolean.TRUE.equals(params.getOnlyAvailable())) {
+        if (params.isOnlyAvailable()) {
             events = events.stream()
-                    .filter(e -> (e.getParticipantLimit() != 0L)
-                            && (e.getParticipantLimit() >
+                    .filter(e -> (e.getParticipantLimit() >
                             requestService.getRequestsByStatus(e.getId(), Status.CONFIRMED).size()))
                     .collect(Collectors.toList());
         }
@@ -123,12 +123,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<EventShortDto> getAllUserFriendsEvents(List<Long> friendIds, int from, int size) {
+    public Set<EventShortDto> getAllUserFriendsEvents(List<Long> friendIds, int from, int size) {
         log.info("Получение событий, созданных друзьями или с их участием");
         return friendIds.stream()
                 .map(id -> getEventsUserCreatedOrJoined(id, from, size))
                 .flatMap(List::stream)
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     @Override

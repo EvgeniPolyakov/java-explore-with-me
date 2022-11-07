@@ -52,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public RequestDto add(Long userId, Event event) {
         User user = userService.getById(userId);
-        log.info("Сохранение заявки пользователя с id {} на событие с id {}", userId, event);
+        log.info("Сохранение заявки пользователя с id {} на событие с id {}", userId, event.getId());
         Request request = repository.getByRequesterIdAndEventId(userId, event.getId());
         validationService.validateNewRequest(event, userId, request, getRequestsByStatus(event.getId(), Status.CONFIRMED));
         Request newRequest = new Request(null, user, event, LocalDateTime.now(), Status.PENDING);
@@ -84,6 +84,14 @@ public class RequestServiceImpl implements RequestService {
         return requests.stream()
                 .map(RequestMapper::toRequestDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isUserPresentAmongRequesters(Long userId, Long eventId) {
+        log.info("Поиск всех зявок на событие с id {}", eventId);
+        List<Request> requests = repository.getAllByEventId(eventId);
+        log.info("Проверка, подал ли пользователь с id {} заявку на событие с id {}", userId, eventId);
+        return requests.stream().anyMatch(r -> r.getRequester().getId().equals(userId));
     }
 
     @Override

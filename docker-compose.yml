@@ -7,10 +7,6 @@ services:
       - "9090:9090"
     depends_on:
       - stats-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/stats
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
 
   stats-db:
     image: postgres:14-alpine
@@ -30,10 +26,6 @@ services:
     depends_on:
       - stats
       - service-db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db:5432/service
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
 
   service-db:
     image: postgres:14-alpine

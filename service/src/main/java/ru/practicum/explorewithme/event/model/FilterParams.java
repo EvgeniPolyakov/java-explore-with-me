@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 public class FilterParams {
     private String text;
     private Long[] categories;
-    private Boolean paid;
+    private boolean paid;
     private LocalDateTime rangeStart;
     private LocalDateTime rangeEnd;
-    private Boolean onlyAvailable;
+    private boolean onlyAvailable;
 }
