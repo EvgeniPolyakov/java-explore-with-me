@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.explorewithme.event.model.EventShortDto;
 import ru.practicum.explorewithme.event.service.EventService;
 import ru.practicum.explorewithme.exception.ForbiddenException;
+import ru.practicum.explorewithme.request.model.RequestDto;
 import ru.practicum.explorewithme.request.service.RequestService;
 import ru.practicum.explorewithme.user.model.User;
 import ru.practicum.explorewithme.user.service.UserService;
@@ -51,8 +52,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<EventShortDto> getAllUserFriendsAvailableEvents(Long userId, boolean excludeOwn, boolean excludeMutual,
-                                                               int from, int size) {
+    public List<EventShortDto> getAllUserFriendsAvailableEvents(Long userId, boolean excludeOwn, boolean excludeMutual,
+                                                                int from, int size) {
         log.info("Получение всех событий с участием друзей пользователя с id {}", userId);
         User user = userService.getById(userId);
         Set<User> friends = user.getFriends();
@@ -60,16 +61,20 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 .filter(u -> !u.getPrivateMode())
                 .map(User::getId)
                 .collect(Collectors.toList());
-        Set<EventShortDto> eventsCollected = eventService.getAllUserFriendsEvents(friendIds, from, size);
+        List<EventShortDto> eventsCollected = eventService.getAllUserFriendsEvents(friendIds, from, size);
         if (excludeOwn) {
             eventsCollected = eventsCollected.stream()
                     .filter(e -> !e.getInitiator().equals(user))
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
         }
         if (excludeMutual) {
+            List<RequestDto> userRequests = requestService.getAll(userId);
+            List<Long> userRequestIds = userRequests.stream()
+                    .map(RequestDto::getEvent)
+                    .collect(Collectors.toList());
             eventsCollected = eventsCollected.stream()
-                    .filter(e -> requestService.isUserPresentAmongRequesters(user.getId(), e.getId()))
-                    .collect(Collectors.toSet());
+                    .filter(e -> !userRequestIds.contains(e.getId()))
+                    .collect(Collectors.toList());
         }
         return eventsCollected;
     }

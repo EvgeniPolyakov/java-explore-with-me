@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @RestController
@@ -36,7 +35,7 @@ public class SubscriptionController {
     }
 
     @GetMapping("/events")
-    public Set<EventShortDto> getAllFriendsEvents(
+    public List<EventShortDto> getAllFriendsEvents(
             @PathVariable(ID_PATH_VARIABLE_KEY) Long userId,
             @RequestParam(required = false, defaultValue = "false") boolean excludeOwn,
             @RequestParam(required = false, defaultValue = "false") boolean excludeMutual,

@@ -7,7 +7,6 @@ import ru.practicum.explorewithme.request.model.RequestDto;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 public interface EventService {
     EventFullDto getShortDtoById(Long id, HttpServletRequest request);
@@ -20,7 +19,7 @@ public interface EventService {
 
     List<EventShortDto> getUserEvents(Long id, int from, int size);
 
-    Set<EventShortDto> getAllUserFriendsEvents(List<Long> friendIds, int from, int size);
+    List<EventShortDto> getAllUserFriendsEvents(List<Long> friendIds, int from, int size);
 
     List<EventShortDto> getEventsUserCreatedOrJoined(Long id, int from, int size);
 

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "events")
-public class Event {
+public class Event implements Comparable<Event> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,6 +40,12 @@ public class Event {
     private boolean paid;
     @Column(name = "request_moderation")
     private boolean requestModeration;
+
+    @Override
+    public int compareTo(Event e) {
+        int date = this.eventDate.compareTo(e.eventDate);
+        return date == 0 ? this.id.compareTo(e.id) : date;
+    }
 
     public Long getId() {
         return id;

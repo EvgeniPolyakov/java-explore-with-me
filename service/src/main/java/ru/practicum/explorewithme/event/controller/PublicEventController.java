@@ -41,7 +41,7 @@ public class PublicEventController {
                                           @RequestParam(defaultValue = "10") @Positive int size,
                                           HttpServletRequest request) {
         log.info("Получен запрос GET по пути /events");
-        if (!sort.equals("EVENT_DATE") && !sort.equals("VIEWS")) {
+        if (sort != null && !sort.equals("EVENT_DATE") && !sort.equals("VIEWS")) {
             throw new BadRequestException("Ошибка: указан некорректный тип сортировки");
         }
         FilterParams params = new FilterParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);

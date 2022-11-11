@@ -1,13 +1,19 @@
 package ru.practicum.explorewithme.exception;
 
 public class ErrorResponse {
-    private final String error;
+    private final String status;
+    private final String errors;
 
-    public ErrorResponse(String error) {
-        this.error = error;
+    public ErrorResponse(String status, String errors) {
+        this.status = status;
+        this.errors = errors;
     }
 
-    public String getError() {
-        return error;
+    public String getErrors() {
+        return errors;
+    }
+
+    public String getStatus() {
+        return status;
     }
 }

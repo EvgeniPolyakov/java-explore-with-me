@@ -87,17 +87,18 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public boolean isUserPresentAmongRequesters(Long userId, Long eventId) {
-        log.info("Поиск всех зявок на событие с id {}", eventId);
-        List<Request> requests = repository.getAllByEventId(eventId);
-        log.info("Проверка, подал ли пользователь с id {} заявку на событие с id {}", userId, eventId);
-        return requests.stream().anyMatch(r -> r.getRequester().getId().equals(userId));
-    }
-
-    @Override
     public List<Event> getAllUserEventsWithConfirmedParticipation(Long id, PageRequest pageRequest) {
         log.info("Поиск всех событий с одобренными зявками от пользователя с id {}", id);
         List<Request> requests = repository.findByRequesterIdAndStatus(id, Status.CONFIRMED, pageRequest);
+        return requests.stream()
+                .map(Request::getEvent)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Event> getAllUserEventsWithConfirmedParticipation(List<Long> ids, PageRequest pageRequest) {
+        log.info("Поиск всех событий с одобренными зявками");
+        List<Request> requests = repository.findByRequesterIdInAndStatus(ids, Status.CONFIRMED, pageRequest);
         return requests.stream()
                 .map(Request::getEvent)
                 .collect(Collectors.toList());

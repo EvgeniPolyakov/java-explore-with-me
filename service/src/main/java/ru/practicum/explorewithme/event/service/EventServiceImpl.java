@@ -26,7 +26,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static ru.practicum.explorewithme.event.model.QEvent.event;
@@ -123,12 +122,17 @@ public class EventServiceImpl implements EventService {
 
     @Override
     @Transactional(readOnly = true)
-    public Set<EventShortDto> getAllUserFriendsEvents(List<Long> friendIds, int from, int size) {
-        log.info("Получение событий, созданных друзьями или с их участием");
-        return friendIds.stream()
-                .map(id -> getEventsUserCreatedOrJoined(id, from, size))
-                .flatMap(List::stream)
-                .collect(Collectors.toSet());
+    public List<EventShortDto> getAllUserFriendsEvents(List<Long> ids, int from, int size) {
+        log.info("Получение событий, созданных друзьями");
+        List<Event> eventsCreated = repository.findEventsByInitiatorIdIn(ids, PageRequest.of(from, size));
+        log.info("Получение событий с одобренными заявками друзей");
+        List<Event> eventsJoined = requestService.getAllUserEventsWithConfirmedParticipation(ids, PageRequest.of(from, size));
+        eventsCreated.removeAll(eventsJoined);
+        eventsCreated.addAll(eventsJoined);
+        return eventsCreated.stream()
+                .sorted()
+                .map(this::toShortDto)
+                .collect(Collectors.toList());
     }
 
     @Override
