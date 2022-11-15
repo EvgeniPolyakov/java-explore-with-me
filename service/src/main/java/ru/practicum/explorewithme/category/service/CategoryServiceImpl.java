@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
-    private static final String CATEGORY_NOT_FOUND_MESSAGE = "категория c id %s не найдена.";
-    private static final String CATEGORY_NOT_EMPTY_MESSAGE = "категория c id %s содержит события.";
+    private static final String CATEGORY_NOT_FOUND_MESSAGE = "Category with id %s has not been found";
+    private static final String CATEGORY_NOT_EMPTY_MESSAGE = "Category with id %s contains events";
 
     private final CategoryRepository categoryRepository;
     private final EventRepository eventRepository;
@@ -29,7 +29,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public List<CategoryDto> getAll() {
-        log.info("Получение списка всех категорий");
+        log.info("Getting the list of all categories");
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
                 .map(CategoryMapper::toCategoryDto)
@@ -39,7 +39,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public CategoryDto getCategoryDtoById(Long id) {
-        log.info("Получение dto категории с id {}", id);
+        log.info("Getting the dto of category with id {}", id);
         Category category = categoryRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, id)));
         return CategoryMapper.toCategoryDto(category);
@@ -48,21 +48,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional(readOnly = true)
     public Category getCategoryById(Long id) {
-        log.info("Получение категории с id {}", id);
+        log.info("Getting the category with id {}", id);
         return categoryRepository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(CATEGORY_NOT_FOUND_MESSAGE, id)));
     }
 
     @Override
     public CategoryDto add(Category category) {
-        log.info("Добавление категории: {}", category);
+        log.info("Adding the category: {}", category);
         Category addedCategory = categoryRepository.save(category);
         return CategoryMapper.toCategoryDto(addedCategory);
     }
 
     @Override
     public CategoryDto update(CategoryDto categoryDto) {
-        log.info("Обновление категории с id {}", categoryDto.getId());
+        log.info("Updating the category with id {}", categoryDto.getId());
         Category categoryForUpdate = getCategoryById(categoryDto.getId());
         categoryForUpdate.setName(categoryDto.getName());
         return CategoryMapper.toCategoryDto(categoryForUpdate);
@@ -70,11 +70,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void delete(Long id) {
-        log.info("Удаление категории с id {}", id);
+        log.info("Deleting the category with id {}", id);
         Category category = getCategoryById(id);
         List<Event> eventsByCategory = eventRepository.findAllByCategoryId(id);
         if (eventsByCategory.isEmpty()) {
             categoryRepository.delete(category);
+            log.info("Category with id {} has been deleted", id);
         } else {
             throw new ForbiddenException(String.format(CATEGORY_NOT_EMPTY_MESSAGE, id));
         }

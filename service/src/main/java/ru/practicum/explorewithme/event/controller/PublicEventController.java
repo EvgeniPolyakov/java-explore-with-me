@@ -40,9 +40,9 @@ public class PublicEventController {
                                           @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                           @RequestParam(defaultValue = "10") @Positive int size,
                                           HttpServletRequest request) {
-        log.info("Получен запрос GET по пути /events");
+        log.info("Received GET request on /events");
         if (sort != null && !sort.equals("EVENT_DATE") && !sort.equals("VIEWS")) {
-            throw new BadRequestException("Ошибка: указан некорректный тип сортировки");
+            throw new BadRequestException("Error: incorrect sorting type");
         }
         FilterParams params = new FilterParams(text, categories, paid, rangeStart, rangeEnd, onlyAvailable);
         return eventService.getAll(params, sort, from, size, request);
@@ -50,7 +50,7 @@ public class PublicEventController {
 
     @GetMapping("/{id}")
     public EventFullDto getById(@PathVariable(ID_PATH_VARIABLE_KEY) Long id, HttpServletRequest request) {
-        log.info("Получен запрос GET по пути /events по id {}", id);
+        log.info("Received GET request on /events with id {}", id);
         return eventService.getShortDtoById(id, request);
     }
 }

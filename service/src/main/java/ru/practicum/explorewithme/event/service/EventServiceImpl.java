@@ -35,7 +35,7 @@ import static ru.practicum.explorewithme.event.model.QEvent.event;
 @Transactional
 @RequiredArgsConstructor
 public class EventServiceImpl implements EventService {
-    private static final String EVENT_NOT_FOUND_MESSAGE = "Событие c id %s не найдено.";
+    private static final String EVENT_NOT_FOUND_MESSAGE = "Event with id %s has not been found.";
     public static final int ONE_HOUR_VALUE = 1;
     public static final int TWO_HOURS_VALUE = 2;
     public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -50,7 +50,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public EventFullDto getShortDtoById(Long id, HttpServletRequest request) {
-        log.info("Получение события с id {}", id);
+        log.info("Getting event with id {}", id);
         statsClient.postHit(
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
                         LocalDateTime.now().format(DATE_TIME_FORMATTER))
@@ -63,7 +63,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public Event getEventById(Long id) {
-        log.info("Получение события с id {}", id);
+        log.info("Getting event with id {}", id);
         return repository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(EVENT_NOT_FOUND_MESSAGE, id)));
     }
@@ -71,7 +71,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getAll(FilterParams params, String sort, int from, int size, HttpServletRequest request) {
-        log.info("Получение всех событий с параметрами фильтра: {}", params);
+        log.info("Getting all events with filter params: {}", params);
         statsClient.postHit(
                 new Hit(request.getServerName(), request.getRequestURI(), request.getRemoteAddr(),
                         LocalDateTime.now().format(DATE_TIME_FORMATTER))
@@ -100,7 +100,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getUserEvents(Long id, int from, int size) {
-        log.info("Получение всех событий пользователя с id {}", id);
+        log.info("Getting all events from user with id {}", id);
         List<Event> events = repository.findEventsByInitiatorId(id, PageRequest.of(from, size));
         return events.stream()
                 .map(this::toShortDto)
@@ -110,9 +110,9 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getEventsUserCreatedOrJoined(Long id, int from, int size) {
-        log.info("Получение всех событий, добавленных пользователем с id {}", id);
+        log.info("Getting all events created by user with id {}", id);
         List<Event> eventsCreated = repository.findEventsByInitiatorId(id, PageRequest.of(from, size));
-        log.info("Получение всех событий с одобренными заявками от пользователя с id {}", id);
+        log.info("Getting all events with confirmed requests by user with id {}", id);
         List<Event> eventsJoined = requestService.getAllUserEventsWithConfirmedParticipation(id, PageRequest.of(from, size));
         eventsCreated.addAll(eventsJoined);
         return eventsCreated.stream()
@@ -123,9 +123,9 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getAllUserFriendsEvents(List<Long> ids, int from, int size) {
-        log.info("Получение событий, созданных друзьями");
+        log.info("Getting all events created by friends");
         List<Event> eventsCreated = repository.findEventsByInitiatorIdIn(ids, PageRequest.of(from, size));
-        log.info("Получение событий с одобренными заявками друзей");
+        log.info("Getting all friends events with confirmed requests");
         List<Event> eventsJoined = requestService.getAllUserEventsWithConfirmedParticipation(ids, PageRequest.of(from, size));
         eventsCreated.removeAll(eventsJoined);
         eventsCreated.addAll(eventsJoined);
@@ -137,7 +137,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto add(NewEventDto eventDto, Long id) {
-        log.info("Добавление события: {}", eventDto);
+        log.info("Adding the event: {}", eventDto);
         validationService.validateDeadline(eventDto.getEventDate(), TWO_HOURS_VALUE);
         Category category = categoryService.getCategoryById(eventDto.getCategory());
         User initiator = userService.getById(id);
@@ -147,7 +147,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto updateUserEvent(Long userId, UpdateEventDto eventDto) {
-        log.info("Обновление события: {}", eventDto);
+        log.info("Updating the event: {}", eventDto);
         Event event = getEventById(eventDto.getEventId());
         validationService.validateEventForUpdate(userId, eventDto, event);
         return updateEventFields(eventDto, event);
@@ -156,7 +156,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public EventFullDto getUserEvent(Long userId, Long eventId) {
-        log.info("Получение события с id: {}", eventId);
+        log.info("Getting the event with id {}", eventId);
         Event event = getEventById(eventId);
         validationService.validateAccessToEvent(userId, eventId, event);
         return toFullDto(event);
@@ -164,7 +164,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto cancelUserEvent(Long id, Long eventId) {
-        log.info("Отмена события с id: {}", eventId);
+        log.info("Canceling the event with id {}", eventId);
         Event event = getEventById(eventId);
         validationService.validatePendingState(event);
         event.setState(State.CANCELED);
@@ -174,7 +174,7 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<RequestDto> getEventRequests(Long userId, Long eventId) {
-        log.info("Запрос заявок на событие с id: {}", eventId);
+        log.info("Getting all requests for event with id {}", eventId);
         Event event = getEventById(eventId);
         validationService.validateAccessToEvent(userId, eventId, event);
         return requestService.getAllRequestsByEvent(eventId);
@@ -182,7 +182,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public RequestDto confirmRequest(Long userId, Long eventId, Long requestId) {
-        log.info("Утверждение заявки с id: {} на событие с id: {}", requestId, eventId);
+        log.info("Confirming requests with id {} for event with id {}", requestId, eventId);
         Event event = getEventById(eventId);
         validationService.validateAccessToEvent(userId, eventId, event);
         return requestService.confirmRequest(event, userId, requestId);
@@ -190,7 +190,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public RequestDto rejectRequest(Long userId, Long eventId, Long requestId) {
-        log.info("Отклонение заявки с id: {} на событие с id: {}", requestId, eventId);
+        log.info("Rejecting request with id {} to event with id {}", requestId, eventId);
         Event event = getEventById(eventId);
         validationService.validateAccessToEvent(userId, eventId, event);
         return requestService.rejectRequest(requestId);
@@ -200,7 +200,7 @@ public class EventServiceImpl implements EventService {
     @Transactional(readOnly = true)
     public List<EventFullDto> getAllByFilter(List<Long> users, List<State> states, List<Long> categories,
                                              LocalDateTime rangeStart, LocalDateTime rangeEnd, int from, int size) {
-        log.info("Получение всех событий с параметрами фильтра: users {}, states {}, categories {}, start {}, end {},",
+        log.info("Getting all events with filter params: users {}, states {}, categories {}, start {}, end {},",
                 users, states, categories, rangeStart, rangeEnd);
         Predicate predicate = QPredicates.builder()
                 .add(users, event.initiator.id::in)
@@ -217,14 +217,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto updateByAdmin(Long id, UpdateEventDto eventDto) {
-        log.info("Обновление события: {}", eventDto);
+        log.info("Updating the event: {}", eventDto);
         Event event = getEventById(id);
         return updateEventFields(eventDto, event);
     }
 
     @Override
     public EventFullDto publishByAdmin(Long id) {
-        log.info("Публикация/утверждение события с id: {}", id);
+        log.info("Publishing the event with id {}", id);
         Event event = getEventById(id);
         validationService.validateDeadline(event.getEventDate(), ONE_HOUR_VALUE);
         validationService.validatePendingState(event);
@@ -235,7 +235,7 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto reject(Long id) {
-        log.info("Отклонение события с id: {}", id);
+        log.info("Rejecting the event with id {}", id);
         Event event = getEventById(id);
         validationService.validatePublishedState(event);
         event.setState(State.CANCELED);
@@ -245,12 +245,12 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional(readOnly = true)
     public List<Event> getCompilationEvents(NewCompilationDto compilationDto) {
-        log.info("Получение событий по id: {}", compilationDto.getEvents());
+        log.info("Getting events for compilation with id {}", compilationDto.getEvents());
         return new ArrayList<>(repository.findEventsByIdIn(compilationDto.getEvents()));
     }
 
     private EventFullDto updateEventFields(UpdateEventDto eventDto, Event event) {
-        log.info("Обновление полей у события: {}", event.getId());
+        log.info("Updating fields for event: {}", event.getId());
         if (eventDto.getTitle() != null) {
             event.setTitle(eventDto.getTitle());
         }
@@ -277,7 +277,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private EventShortDto toShortDto(Event event) {
-        log.info("Конвертация события event: {} в формат EventShortDto", event);
+        log.info("Mapping event: {} to EventShortDto", event);
         int confirmedRequests = requestService.getRequestsByStatus(event.getId(), Status.CONFIRMED).size();
         ViewStats viewStats = statsClient.getStats(
                 event.getId().intValue(),
@@ -287,7 +287,7 @@ public class EventServiceImpl implements EventService {
     }
 
     private EventFullDto toFullDto(Event event) {
-        log.info("Конвертация события event: {} в формат EventFullDto", event);
+        log.info("Mapping event: {} to EventFullDto", event);
         int confirmedRequests = requestService.getRequestsByStatus(event.getId(), Status.CONFIRMED).size();
         ViewStats viewStats = statsClient.getStats(
                 event.getId().intValue(),

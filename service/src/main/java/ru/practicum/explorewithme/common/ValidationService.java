@@ -12,20 +12,20 @@ import java.util.List;
 
 @Service
 public class ValidationService {
-    private static final String NO_ACCESS_MESSAGE = "Пользователь с id %s не имеет доступа к событию с id %s.";
+    private static final String NO_ACCESS_MESSAGE = "User with id %s has no rights to access event with id %s.";
     public static final String UNPUBLISHED_EVENT_PARTICIPATION_ERROR_MESSAGE =
-            "Ошибка: попытка принять участие в неопубликованном событии";
-    public static final String DUPLICATE_ENTRY_MASSAGE = "Ошибка: попытка добавления повторного запроса";
+            "Error: user is trying to participate in an event that is not in a published state";
+    public static final String DUPLICATE_ENTRY_MASSAGE = "Error: user has already sent a request for this event";
     public static final String OWN_EVENT_PARTICIPATION_ERROR_MESSAGE =
-            "Ошибка: попытка пользователя добавить запрос на участие в своём же событии";
-    public static final String PARTICIPATION_LIMIT_REACHED_MESSAGE = "Достигнут лимит по заявкам на данное событие";
+            "Error: user is requesting to participate in his own event";
+    public static final String PARTICIPATION_LIMIT_REACHED_MESSAGE = "Participant limit has been reached";
     public static final String EVENT_NOT_IN_PENDING_STATE_MESSAGE =
-            "Ошибка: событие должно быть в состоянии ожидания публикации";
+            "Error: event must be in a pending state";
     public static final String EVENT_IN_PUBLISHED_STATE_MESSAGE =
-            "Ошибка: нельзя отменить событие в опубликованном состоянии";
+            "Error: one can not reject event in a published state";
     public static final String EVENT_FOR_UPDATE_ALREADY_PUBLISHED_MESSAGE =
-            "Ошибка: попытка внесение изменений в опубликованное событие";
-    public static final String LATE_DEADLINE_MESSAGE = "До события осталось менее %s часа/часов";
+            "Error: one can not amend an event in a published state";
+    public static final String LATE_DEADLINE_MESSAGE = "Event starts in less than %s hours";
 
     public void validateNewRequest(Event event, Long userId, Request request, List<Request> confirmedRequests) {
         if (request != null) {

@@ -15,7 +15,7 @@ import javax.validation.ConstraintViolationException;
 @RestControllerAdvice
 public class ErrorHandler {
 
-    public static final String EXCEPTION_STRING_MESSAGE = "Поймано исключение: {}";
+    public static final String EXCEPTION_STRING_MESSAGE = "Caught an exception: {}";
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)

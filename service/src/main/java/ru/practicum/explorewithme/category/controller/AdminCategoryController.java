@@ -22,20 +22,20 @@ public class AdminCategoryController {
 
     @PostMapping
     public CategoryDto add(@Valid @RequestBody NewCategoryDto categoryDto) {
-        log.info("Получен запрос POST по пути /admin/categories: {}", categoryDto);
+        log.info("Received POST request on /admin/categories: {}", categoryDto);
         Category category = CategoryMapper.toCategory(categoryDto);
         return categoryService.add(category);
     }
 
     @PatchMapping
     public CategoryDto update(@Valid @RequestBody CategoryDto categoryDto) {
-        log.info("Получен запрос PATCH по пути /admin/categories: {}", categoryDto);
+        log.info("Received PATCH request on /admin/categories: {}", categoryDto);
         return categoryService.update(categoryDto);
     }
 
     @DeleteMapping("/{id}")
     public void remove(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос DELETE по пути /admin/categories/ по id {}", id);
+        log.info("Received DELETE request on /admin/categories/ with id {}", id);
         categoryService.delete(id);
     }
 }

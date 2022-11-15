@@ -6,8 +6,6 @@ import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.event.model.*;
 import ru.practicum.explorewithme.user.model.User;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class EventMapper {
 
@@ -19,7 +17,7 @@ public class EventMapper {
                 eventDto.getDescription(),
                 category,
                 State.PENDING,
-                LocalDateTime.now(),
+                null,
                 null,
                 eventDto.getEventDate(),
                 initiator,

@@ -30,7 +30,7 @@ public class SubscriptionController {
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(required = false, defaultValue = "10") @Positive int size
     ) {
-        log.debug("Получен запрос GET по пути /users/{}/friends/{}/events", userId, friendId);
+        log.debug("Received GET request on /users/{}/friends/{}/events", userId, friendId);
         return subscriptionService.getFriendEvents(userId, friendId, excludeOwn, from, size);
     }
 
@@ -42,7 +42,7 @@ public class SubscriptionController {
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(required = false, defaultValue = "10") @Positive int size
     ) {
-        log.debug("Получен запрос GET по пути /users/{}/friends/events", userId);
+        log.debug("Received GET request on /users/{}/friends/events", userId);
         return subscriptionService.getAllUserFriendsAvailableEvents(userId, excludeOwn, excludeMutual, from, size);
     }
 
@@ -51,7 +51,7 @@ public class SubscriptionController {
             @PathVariable(ID_PATH_VARIABLE_KEY) @Positive @NotNull Long userId,
             @PathVariable(FRIEND_ID_PATH_VARIABLE_KEY) @Positive @NotNull Long friendId
     ) {
-        log.debug("Получен запрос PUT по пути /users/{}/friends/{}", userId, friendId);
+        log.debug("Received PUT request on /users/{}/friends/{}", userId, friendId);
         subscriptionService.addFriend(userId, friendId);
     }
 
@@ -60,7 +60,7 @@ public class SubscriptionController {
             @PathVariable(ID_PATH_VARIABLE_KEY) @Positive @NotNull Long userId,
             @PathVariable(FRIEND_ID_PATH_VARIABLE_KEY) @Positive @NotNull Long friendId
     ) {
-        log.debug("Получен запрос DELETE по пути /users/{}/friends/{}", userId, friendId);
+        log.debug("Received DELETE request on /users/{}/friends/{}", userId, friendId);
         subscriptionService.deleteFriend(userId, friendId);
     }
 
@@ -69,7 +69,7 @@ public class SubscriptionController {
             @PathVariable(ID_PATH_VARIABLE_KEY) @Positive @NotNull Long userId,
             @RequestParam boolean isPrivate
     ) {
-        log.debug("Получен запрос PUT по пути /admin/users/{}/friends/{}", userId, isPrivate);
+        log.debug("Received PUT request on /admin/users/{}/friends/{}", userId, isPrivate);
         subscriptionService.setPrivacy(userId, isPrivate);
     }
 }

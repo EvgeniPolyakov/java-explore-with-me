@@ -24,7 +24,7 @@ public class UserRequestController {
     @GetMapping
     public List<RequestDto> getEventRequests(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                              @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId) {
-        log.info("Получен запрос GET по пути /users/{}/events/{}/requests", id, eventId);
+        log.info("Received GET request on /users/{}/events/{}/requests", id, eventId);
         return eventService.getEventRequests(id, eventId);
     }
 
@@ -32,7 +32,7 @@ public class UserRequestController {
     public RequestDto confirmRequest(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                      @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId,
                                      @PathVariable(REQ_ID_PATH_VARIABLE_KEY) Long requestId) {
-        log.info("Получен запрос PATCH по пути /users/{}/events/{}/requests/{}/confirm", id, eventId, requestId);
+        log.info("Received PATCH request on /users/{}/events/{}/requests/{}/confirm", id, eventId, requestId);
         return eventService.confirmRequest(id, eventId, requestId);
     }
 
@@ -40,7 +40,7 @@ public class UserRequestController {
     public RequestDto rejectRequest(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                     @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId,
                                     @PathVariable(REQ_ID_PATH_VARIABLE_KEY) Long requestId) {
-        log.info("Получен запрос PATCH по пути /users/{}/events/{}/requests/{}/reject", id, eventId, requestId);
+        log.info("Received PATCH request on /users/{}/events/{}/requests/{}/reject", id, eventId, requestId);
         return eventService.rejectRequest(id, eventId, requestId);
     }
 }

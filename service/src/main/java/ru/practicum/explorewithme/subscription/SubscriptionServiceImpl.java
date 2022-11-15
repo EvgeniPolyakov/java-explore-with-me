@@ -21,9 +21,9 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
-    private static final String NOT_A_FRIEND_MESSAGE = "Пользователь %s не входит в число друзей пользователя %s.";
-    private static final String ACCESS_DENIED_MESSAGE = "Пользователь %s закрыл доступ к событиям со своим участием.";
-    private static final String FRIEND_ALREADY_ADDED_MESSAGE = "Пользователь %s уже находится в списке друзей.";
+    private static final String NOT_A_FRIEND_MESSAGE = "User %s is not present in user %s subscription list";
+    private static final String ACCESS_DENIED_MESSAGE = "User %s has denied access to his events";
+    private static final String FRIEND_ALREADY_ADDED_MESSAGE = "User %s is already present in subscription list";
 
     private final UserService userService;
     private final EventService eventService;
@@ -32,7 +32,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     @Transactional(readOnly = true)
     public List<EventShortDto> getFriendEvents(Long userId, Long friendId, boolean excludeOwn, int from, int size) {
-        log.info("Получение пользователем с id {} событий с участием пользователя с id {}", userId, friendId);
+        log.info("User {} getting events attended by user {}", userId, friendId);
         User user = userService.getById(userId);
         User friend = userService.getById(friendId);
         if (!user.getFriends().contains(friend)) {
@@ -54,7 +54,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Transactional(readOnly = true)
     public List<EventShortDto> getAllUserFriendsAvailableEvents(Long userId, boolean excludeOwn, boolean excludeMutual,
                                                                 int from, int size) {
-        log.info("Получение всех событий с участием друзей пользователя с id {}", userId);
+        log.info("User {} getting events attended by all users from his subscription list", userId);
         User user = userService.getById(userId);
         Set<User> friends = user.getFriends();
         List<Long> friendIds = friends.stream()
@@ -81,7 +81,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
 
     @Override
     public void addFriend(Long userId, Long friendId) {
-        log.info("Добавление подписки пользователя с id {} на пользователя с id {}", userId, friendId);
+        log.info("Adding user {} to user {} subscription list", friendId, userId);
         User user = userService.getById(userId);
         User friend = userService.getById(friendId);
         if (friend.getPrivateMode()) {
@@ -91,23 +91,23 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             throw new ForbiddenException(String.format(FRIEND_ALREADY_ADDED_MESSAGE, friendId));
         }
         user.getFriends().add(friend);
-        log.info("Пользователь с id {} подписался на события пользователя с id {}", userId, friendId);
+        log.info("User {} has been added to user {} subscription list", friendId, userId);
     }
 
     @Override
     public void deleteFriend(Long userId, Long friendId) {
-        log.info("Удаление подписки пользователя с id {} на пользователя с id {}", userId, friendId);
+        log.info("Removing user {} from user {} subscription list", friendId, userId);
         User user = userService.getById(userId);
         User friend = userService.getById(friendId);
         user.getFriends().remove(friend);
-        log.info("Пользователь с id {} удалил подписку на события пользователя с id {}", userId, friendId);
+        log.info("User {} has removed user {} from his subscription list", userId, friendId);
     }
 
     @Override
     public void setPrivacy(Long id, boolean isPrivate) {
-        log.info("Присвоение пользователю id {} уровня приватности: {}", id, isPrivate);
+        log.info("Assigning private mode status {} for user {}", isPrivate, id);
         User user = userService.getById(id);
         user.setPrivateMode(isPrivate);
-        log.info("Пользователь с id {} присвоил уровень приватности: {}", id, isPrivate);
+        log.info("User {} has assigned private mode status: {}", id, isPrivate);
     }
 }

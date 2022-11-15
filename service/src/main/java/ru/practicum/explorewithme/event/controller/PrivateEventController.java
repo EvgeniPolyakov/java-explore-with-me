@@ -30,35 +30,35 @@ public class PrivateEventController {
     public List<EventShortDto> getUserEvents(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                              @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
                                              @RequestParam(required = false, defaultValue = "10") @Positive int size) {
-        log.info("Получен запрос GET по пути /users/{}/events", id);
+        log.info("Received GET request on /users/{}/events", id);
         return eventService.getUserEvents(id, from, size);
     }
 
     @PatchMapping
     public EventFullDto updateUserEvent(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                         @Valid @RequestBody UpdateEventDto eventDto) {
-        log.info("Получен запрос PATCH по пути /users/{}/events", id);
+        log.info("Received PATCH request on /users/{}/events", id);
         return eventService.updateUserEvent(id, eventDto);
     }
 
     @PostMapping
     public EventFullDto createEventOfUser(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                           @Valid @RequestBody NewEventDto newEventDto) {
-        log.info("Получен запрос POST по пути /users/{}/events", id);
+        log.info("Received POST request on /users/{}/events", id);
         return eventService.add(newEventDto, id);
     }
 
     @GetMapping("/{eventId}")
     public EventFullDto getUserEvent(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                      @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId) {
-        log.info("Получен запрос GET по пути /users/{}/events/{}", id, eventId);
+        log.info("Received GET request on /users/{}/events/{}", id, eventId);
         return eventService.getUserEvent(id, eventId);
     }
 
     @PatchMapping("/{eventId}")
     public EventFullDto cancelUserEvent(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                         @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId) {
-        log.info("Получен запрос PATCH по пути /users/{}/events/{}", id, eventId);
+        log.info("Received PATCH request on /users/{}/events/{}", id, eventId);
         return eventService.cancelUserEvent(id, eventId);
     }
 }

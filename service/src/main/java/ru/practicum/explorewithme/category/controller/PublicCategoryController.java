@@ -22,13 +22,13 @@ public class PublicCategoryController {
 
     @GetMapping
     public List<CategoryDto> getAll() {
-        log.info("Получен запрос GET по пути /categories");
+        log.info("Received GET request on /categories");
         return categoryService.getAll();
     }
 
     @GetMapping("/{id}")
     public CategoryDto getById(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос GET по пути /categories по id {}", id);
+        log.info("Received GET request on /categories with id {}", id);
         return categoryService.getCategoryDtoById(id);
     }
 }

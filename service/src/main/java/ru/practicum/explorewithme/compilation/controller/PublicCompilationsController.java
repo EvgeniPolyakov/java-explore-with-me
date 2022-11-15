@@ -27,13 +27,13 @@ public class PublicCompilationsController {
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(required = false, defaultValue = "10") @Positive int size
     ) {
-        log.info("Получен запрос GET по пути /compilations");
+        log.info("Received GET request on /compilations");
         return compilationsService.getAll(pinned, from, size);
     }
 
     @GetMapping("/{id}")
     public CompilationDto getById(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос GET по пути /compilations по id {}", id);
+        log.info("Received GET request on /compilations with id {}", id);
         return compilationsService.getCompilationDtoById(id);
     }
 

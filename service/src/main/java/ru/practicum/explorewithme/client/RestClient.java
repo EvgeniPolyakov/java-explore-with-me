@@ -31,12 +31,12 @@ public class RestClient {
     }
 
     public void postHit(Hit hit) {
-        log.info("Отправление пакета на сервер статистики: {}", hit);
+        log.info("Sending package to statistics server: {}", hit);
         rest.postForEntity(hitPostPath, hit, Hit.class);
     }
 
     public ViewStats getStats(int eventId, LocalDateTime start, LocalDateTime end) {
-        log.info("Обращение к сервису статистики");
+        log.info("Requesting stats fro statistics server");
         ViewStats[] stats = rest.getForObject(
                 String.format(
                         hitGetPath,

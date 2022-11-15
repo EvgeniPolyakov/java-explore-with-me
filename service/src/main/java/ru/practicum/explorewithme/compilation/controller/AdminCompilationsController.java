@@ -27,7 +27,7 @@ public class AdminCompilationsController {
 
     @PostMapping
     public CompilationDto add(@Valid @RequestBody NewCompilationDto compilationDto) {
-        log.info("Получен запрос POST по пути /admin/compilations: {}", compilationDto);
+        log.info("Received POST request on /admin/compilations: {}", compilationDto);
         List<Event> events = eventService.getCompilationEvents(compilationDto);
         Compilation compilation = CompilationMapper.toCompilation(compilationDto, events);
         return compilationsService.add(compilation);
@@ -36,34 +36,34 @@ public class AdminCompilationsController {
     @PatchMapping("/{id}/events/{eventId}")
     public CompilationDto addEvent(@PathVariable(ID_PATH_VARIABLE_KEY) Long compilationId,
                                    @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId) {
-        log.info("Получен запрос PATCH по пути /admin/compilations (id: {}, eventId: {})", compilationId, eventId);
+        log.info("Received PATCH request on /admin/compilations (id: {}, eventId: {})", compilationId, eventId);
         Event eventToAdd = eventService.getEventById(eventId);
         return compilationsService.update(compilationId, eventId, eventToAdd);
     }
 
     @PatchMapping("/{id}/pin")
     public CompilationDto pin(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос PATCH для прикрепления подборки с id: {}", id);
+        log.info("Received PATCH request to pin compilation with id {}", id);
         return compilationsService.pin(id);
     }
 
     @DeleteMapping("/{id}")
     public void remove(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос DELETE по пути /admin/compilations/ по id {}", id);
+        log.info("Received GET request on /admin/compilations/ with id {}", id);
         compilationsService.delete(id);
     }
 
     @DeleteMapping("/{id}/events/{eventId}")
     public void removeEvent(@PathVariable(ID_PATH_VARIABLE_KEY) Long compilationId,
                             @PathVariable(EVENT_ID_PATH_VARIABLE_KEY) Long eventId) {
-        log.info("Получен запрос DELETE по пути /admin/compilations (id: {}, eventId: {})", compilationId, eventId);
+        log.info("Received DELETE request on /admin/compilations (id: {}, eventId: {})", compilationId, eventId);
         Event eventToRemove = eventService.getEventById(eventId);
         compilationsService.deleteEvent(compilationId, eventId, eventToRemove);
     }
 
     @DeleteMapping("/{id}/pin")
     public CompilationDto unpin(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос PATCH для открепления подборки с id: {}", id);
+        log.info("Received PATCH request to unpin compilation with id {}", id);
         return compilationsService.unpin(id);
     }
 }

@@ -25,7 +25,7 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public void addHit(HitDto dto) {
-        log.info("Сохранение статистики для hit: {}", dto);
+        log.info("Saving statistics date for hit: {}", dto);
         Hit hit = StatsMapper.toHit(dto);
         repository.save(hit);
     }
@@ -37,7 +37,7 @@ public class StatsServiceImpl implements StatsService {
         for (String u : uncodedUris) {
             uris.add(URLDecoder.decode(u, StandardCharsets.UTF_8));
         }
-        log.info("Получение статистики по списку uri: {}", uris);
+        log.info("getting statistics date for uri: {}", uris);
         List<Hit> hits = repository.findDistinctHitsByUriInAndTimestampBetween(uris, start, end);
         List<ViewStats> viewStats = hits.stream()
                 .map(h -> StatsMapper.toViewStats(h, hits.size()))

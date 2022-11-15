@@ -27,19 +27,19 @@ public class UserController {
     public List<UserDto> getAllById(@RequestParam List<Long> ids,
                                     @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
                                     @RequestParam(required = false, defaultValue = "10") @Positive int size) {
-        log.info("Получен запрос GET по пути /admin/users");
+        log.info("Received GET request on /admin/users");
         return userService.getAll(ids, from, size);
     }
 
     @PostMapping
     public UserDto add(@Valid @RequestBody NewUserDto userDto) {
-        log.info("Получен запрос POST по пути /admin/users для добавления пользователя: {}", userDto);
+        log.info("Received POST request on /admin/users to add user: {}", userDto);
         return userService.add(userDto);
     }
 
     @DeleteMapping("/{id}")
     public void remove(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос DELETE по пути /admin/users по id {}", id);
+        log.info("Received DELETE request on /admin/users with id {}", id);
         userService.delete(id);
     }
 }

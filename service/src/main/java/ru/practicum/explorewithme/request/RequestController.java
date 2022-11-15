@@ -22,20 +22,20 @@ public class RequestController {
 
     @GetMapping
     public List<RequestDto> getAll(@PathVariable(ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос GET по пути /users/{}/requests", id);
+        log.info("Received GET request on /users/{}/requests", id);
         return requestService.getAll(id);
     }
 
     @PostMapping
     public RequestDto add(@PathVariable(ID_PATH_VARIABLE_KEY) Long userId, @RequestParam Long eventId) {
-        log.info("Получен запрос POST по пути /users/{}/requests", userId);
+        log.info("Received POST request on /users/{}/requests", userId);
         Event event = eventService.getEventById(eventId);
         return requestService.add(userId, event);
     }
 
     @PatchMapping("/{requestId}/cancel")
     public RequestDto update(@PathVariable(ID_PATH_VARIABLE_KEY) Long userId, @PathVariable Long requestId) {
-        log.info("Получен запрос PATCH по пути /users/{}/requests", userId);
+        log.info("Received PATCH request on /users/{}/requests", userId);
         return requestService.update(userId, requestId);
     }
 }

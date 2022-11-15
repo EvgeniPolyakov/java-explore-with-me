@@ -36,26 +36,26 @@ public class AdminEventController {
             @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
             @RequestParam(required = false, defaultValue = "10") @Positive int size
     ) {
-        log.info("Получен запрос GET по пути /admin/events");
+        log.info("Received GET request on /admin/events");
         return eventService.getAllByFilter(users, states, categories, rangeStart, rangeEnd, from, size);
     }
 
     @PutMapping("/{id}")
     public EventFullDto adminUpdateEventRequest(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id,
                                                 @Valid @RequestBody UpdateEventDto eventDto) {
-        log.info("Получен запрос PUT по пути /admin/events/{}", id);
+        log.info("Received PUT request on /admin/events/{}", id);
         return eventService.updateByAdmin(id, eventDto);
     }
 
     @PatchMapping("/{id}/publish")
     public EventFullDto adminPublishEventRequest(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос PATCH по пути /admin/events/{}/publish", id);
+        log.info("Received PATCH request on /admin/events/{}/publish", id);
         return eventService.publishByAdmin(id);
     }
 
     @PatchMapping("/{id}/reject")
     public EventFullDto reject(@PathVariable(USER_ID_PATH_VARIABLE_KEY) Long id) {
-        log.info("Получен запрос PATCH по пути /admin/events/{}/reject", id);
+        log.info("Received PATCH request on /admin/events/{}/reject", id);
         return eventService.reject(id);
     }
 }

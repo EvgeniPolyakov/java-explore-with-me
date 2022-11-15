@@ -25,23 +25,23 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
-    private static final String REQUEST_NOT_FOUND_MESSAGE = "заявка c id %s не найдена.";
+    private static final String REQUEST_NOT_FOUND_MESSAGE = "Request with id %s has not been found";
     public static final String WRONG_STATE_TO_CONFIRM_REQUEST_MESSAGE = "Only pending or canceled events can be changed";
-    public static final String PARTICIPATION_LIMIT_REACHED_MESSAGE = "Достигнут лимит по заявкам на данное событие";
+    public static final String PARTICIPATION_LIMIT_REACHED_MESSAGE = "Participant limit has been reached";
 
     private final UserService userService;
     private final RequestRepository repository;
     private final ValidationService validationService;
 
     private Request getById(Long id) {
-        log.info("Получение заявки с id {}", id);
+        log.info("Getting request with id {}", id);
         return repository.findById(id).orElseThrow(
                 () -> new NotFoundException(String.format(REQUEST_NOT_FOUND_MESSAGE, id)));
     }
 
     @Override
     public List<RequestDto> getAll(Long id) {
-        log.info("Получение заявок пользователя с id {} на участие в чужих событиях", id);
+        log.info("Getting user {} requests for participation in other events", id);
         List<Request> requests = repository.getAllByRequesterId(id);
         return requests.stream()
                 .map(RequestMapper::toRequestDto)
@@ -52,7 +52,7 @@ public class RequestServiceImpl implements RequestService {
     @Transactional
     public RequestDto add(Long userId, Event event) {
         User user = userService.getById(userId);
-        log.info("Сохранение заявки пользователя с id {} на событие с id {}", userId, event.getId());
+        log.info("Saving user {} request to participate in event {}", userId, event.getId());
         Request request = repository.getByRequesterIdAndEventId(userId, event.getId());
         validationService.validateNewRequest(event, userId, request, getRequestsByStatus(event.getId(), Status.CONFIRMED));
         Request newRequest = new Request(null, user, event, LocalDateTime.now(), Status.PENDING);
@@ -65,7 +65,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public RequestDto update(Long userId, Long requestId) {
-        log.info("Отмена заявки пользователя с id {} на событие с id {}", userId, requestId);
+        log.info("Caneling user {} request to participate in event {}", userId, requestId);
         Request request = getById(requestId);
         request.setStatus(Status.CANCELED);
         return RequestMapper.toRequestDto(repository.save(request));
@@ -73,13 +73,13 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<Request> getRequestsByStatus(Long id, Status status) {
-        log.info("Поиск всех зявок в статусе {} на событие с id {}", status, id);
+        log.info("Getting requests in {} status for event {}", status, id);
         return repository.findByEventIdAndStatus(id, status);
     }
 
     @Override
     public List<RequestDto> getAllRequestsByEvent(Long eventId) {
-        log.info("Поиск всех зявок на событие с id {}", eventId);
+        log.info("Getting all requests for event {}", eventId);
         List<Request> requests = repository.getAllByEventId(eventId);
         return requests.stream()
                 .map(RequestMapper::toRequestDto)
@@ -88,7 +88,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<Event> getAllUserEventsWithConfirmedParticipation(Long id, PageRequest pageRequest) {
-        log.info("Поиск всех событий с одобренными зявками от пользователя с id {}", id);
+        log.info("Getting all confirmed requests from user {}", id);
         List<Request> requests = repository.findByRequesterIdAndStatus(id, Status.CONFIRMED, pageRequest);
         return requests.stream()
                 .map(Request::getEvent)
@@ -97,7 +97,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<Event> getAllUserEventsWithConfirmedParticipation(List<Long> ids, PageRequest pageRequest) {
-        log.info("Поиск всех событий с одобренными зявками");
+        log.info("Getting all events with confirmed request status for users with provided ids");
         List<Request> requests = repository.findByRequesterIdInAndStatus(ids, Status.CONFIRMED, pageRequest);
         return requests.stream()
                 .map(Request::getEvent)
@@ -107,7 +107,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public RequestDto rejectRequest(Long requestId) {
-        log.info("Отмена зявки с id {}", requestId);
+        log.info("Rejecting request {}", requestId);
         Request request = getById(requestId);
         request.setStatus(Status.REJECTED);
         return RequestMapper.toRequestDto(request);
@@ -116,7 +116,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     @Transactional
     public RequestDto confirmRequest(Event event, Long userId, Long requestId) {
-        log.info("Утверждение зявки с id {}", requestId);
+        log.info("Confirming request {}", requestId);
         Request request = getById(requestId);
         if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
             request.setStatus(Status.CONFIRMED);
