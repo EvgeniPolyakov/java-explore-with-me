@@ -16,7 +16,8 @@ public class CompilationMapper {
                 null,
                 compilationDto.getTitle(),
                 compilationDto.isPinned(),
-                events
+                events,
+                null
         );
     }
 

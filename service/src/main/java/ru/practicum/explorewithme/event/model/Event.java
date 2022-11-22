@@ -7,6 +7,7 @@ import ru.practicum.explorewithme.category.model.Category;
 import ru.practicum.explorewithme.user.model.User;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.time.LocalDateTime;
 
 @Entity
@@ -42,6 +43,9 @@ public class Event implements Comparable<Event> {
     private boolean paid;
     @Column(name = "request_moderation")
     private boolean requestModeration;
+    @Version
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date version;
 
     @Override
     public int compareTo(Event e) {

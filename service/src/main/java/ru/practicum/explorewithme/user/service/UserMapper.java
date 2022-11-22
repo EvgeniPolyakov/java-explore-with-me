@@ -27,7 +27,8 @@ public class UserMapper {
                 userDto.getName(),
                 userDto.getEmail(),
                 new HashSet<>(),
-                FALSE
+                FALSE,
+                null
         );
     }
 }

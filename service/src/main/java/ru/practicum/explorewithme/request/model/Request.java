@@ -8,6 +8,7 @@ import ru.practicum.explorewithme.user.model.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.time.LocalDateTime;
 
 @Entity
@@ -31,6 +32,9 @@ public class Request {
     @NotNull
     @Enumerated(EnumType.STRING)
     private Status status;
+    @Version
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date version;
 
     public Long getId() {
         return id;

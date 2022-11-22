@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
@@ -25,6 +26,9 @@ public class User {
     private Set<User> friends;
     @Column(name = "private_mode")
     private boolean privateMode;
+    @Version
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date version;
 
     public Long getId() {
         return id;

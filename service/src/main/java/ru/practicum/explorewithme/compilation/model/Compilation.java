@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import ru.practicum.explorewithme.event.model.Event;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -24,6 +25,9 @@ public class Compilation {
             inverseJoinColumns = @JoinColumn(name = "event_id", referencedColumnName = "id")
     )
     private List<Event> events;
+    @Version
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date version;
 
     public Long getId() {
         return id;

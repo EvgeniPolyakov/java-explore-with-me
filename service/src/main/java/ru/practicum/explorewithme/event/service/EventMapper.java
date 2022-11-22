@@ -24,7 +24,8 @@ public class EventMapper {
                 eventDto.getLocation(),
                 eventDto.getParticipantLimit(),
                 eventDto.isPaid(),
-                eventDto.isRequestModeration()
+                eventDto.isRequestModeration(),
+                null
         );
     }
 

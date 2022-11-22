@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "categories")
@@ -15,6 +16,9 @@ public class Category {
     private Long id;
     @Column(nullable = false, unique = true)
     private String name;
+    @Version
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date version;
 
     public Long getId() {
         return id;

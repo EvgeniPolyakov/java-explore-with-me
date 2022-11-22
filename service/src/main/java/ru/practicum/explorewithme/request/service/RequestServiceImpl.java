@@ -55,7 +55,7 @@ public class RequestServiceImpl implements RequestService {
         log.info("Saving user {} request to participate in event {}", userId, event.getId());
         Request request = repository.getByRequesterIdAndEventId(userId, event.getId());
         validationService.validateNewRequest(event, userId, request, getRequestsByStatus(event.getId(), Status.CONFIRMED));
-        Request newRequest = new Request(null, user, event, LocalDateTime.now(), Status.PENDING);
+        Request newRequest = new Request(null, user, event, LocalDateTime.now(), Status.PENDING, null);
         if (!event.isRequestModeration()) {
             newRequest.setStatus(Status.CONFIRMED);
         }
